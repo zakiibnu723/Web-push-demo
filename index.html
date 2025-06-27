@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Web Push Demo with Interval</title>
+  <title>Web Push Demo</title>
 </head>
 <body>
-  <h1>Demo Web Push Tiap 10 Detik</h1>
-  <button id="start">Mulai Notifikasi Tiap 10 Detik</button>
+  <h1>Web Push Notification Demo</h1>
+  <button id="subscribe">Izinkan Notifikasi</button>
+  <button id="notify">Kirim Notifikasi</button>
 
   <script>
-    // Daftarkan Service Worker
+    // Daftarkan service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
         .then(() => console.log('✅ Service Worker terdaftar!'))
@@ -18,25 +19,26 @@
     }
 
     // Minta izin notifikasi
-    document.getElementById('start').addEventListener('click', async () => {
+    document.getElementById('subscribe').onclick = async () => {
       const permission = await Notification.requestPermission();
+      alert('Izin notifikasi: ' + permission);
+    };
 
-      if (permission !== 'granted') {
-        alert('Izin notifikasi ditolak.');
-        return;
-      }
-
-      const reg = await navigator.serviceWorker.ready;
-
-      setInterval(() => {
-        reg.showNotification('Notifikasi Demo', {
-          body: 'Ini notifikasi yang muncul tiap 10 detik!',
+    // Kirim notifikasi (via service worker)
+    document.getElementById('notify').onclick = async () => {
+      if (Notification.permission === 'granted') {
+        const reg = await navigator.serviceWorker.ready;
+        reg.showNotification('Booking Berhasil!', {
+          body: 'Terima kasih telah melakukan booking.',
           icon: 'https://via.placeholder.com/128',
-          tag: 'demo-interval',
+          vibrate: [200, 100, 200],
+          tag: 'booking-success',
           renotify: true
         });
-      }, 10000); // 10 detik
-    });
+      } else {
+        alert('Notifikasi belum diizinkan.');
+      }
+    };
   </script>
 </body>
 </html>
