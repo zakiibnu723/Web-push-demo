@@ -1,5 +1,4 @@
-// sw.js (empty for demo)
-// Tapi wajib ada agar Notification bisa muncul via service worker
+// sw.js
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(clients.openWindow('/'));
