@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web Push Demo</title>
+</head>
+<body>
+  <h1>Web Push Notification Demo</h1>
+  <button id="subscribe">Izinkan Notifikasi</button>
+  <button id="notify">Kirim Notifikasi</button>
+
+  <script>
+    // Daftarkan service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('✅ Service Worker terdaftar!'))
+        .catch(err => console.error('❌ SW error:', err));
+    }
+
+    // Minta izin notifikasi
+    document.getElementById('subscribe').onclick = async () => {
+      const permission = await Notification.requestPermission();
+      alert('Izin notifikasi: ' + permission);
+    };
+
+    // Kirim notifikasi (via service worker)
+    document.getElementById('notify').onclick = async () => {
+      if (Notification.permission === 'granted') {
+        const reg = await navigator.serviceWorker.ready;
+        reg.showNotification('Booking Berhasil!', {
+          body: 'Terima kasih telah melakukan booking.',
+          icon: 'https://via.placeholder.com/128',
+          vibrate: [200, 100, 200],
+          tag: 'booking-success',
+          renotify: true
+        });
+      } else {
+        alert('Notifikasi belum diizinkan.');
+      }
+    };
+  </script>
+</body>
+</html>
